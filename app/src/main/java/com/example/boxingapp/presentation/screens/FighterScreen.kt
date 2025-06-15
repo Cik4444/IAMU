@@ -54,6 +54,7 @@ import androidx.compose.ui.platform.LocalContext
 import com.example.boxingapp.data.database.AppDatabase
 import com.example.boxingapp.data.repository.FighterRepository
 import com.example.boxingapp.ui.viewmodel.FighterViewModelFactory
+import com.example.boxingapp.data.api.RetrofitInstance
 
 
 @Composable

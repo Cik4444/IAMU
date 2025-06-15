@@ -13,6 +13,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.boxingapp.data.database.AppDatabase
 import com.example.boxingapp.ui.viewmodel.DivisionViewModel
 import com.example.boxingapp.ui.viewmodel.DivisionViewModelFactory
+import com.example.boxingapp.data.api.RetrofitInstance
 
 @Composable
 fun DivisionScreen() {
