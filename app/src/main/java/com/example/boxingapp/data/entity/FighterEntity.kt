@@ -31,3 +31,4 @@ data class FighterEntity(
     @ColumnInfo(name = "isFavorite")
     val isFavorite: Boolean = false
 )
+
