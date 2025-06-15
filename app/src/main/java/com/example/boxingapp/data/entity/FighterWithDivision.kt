@@ -1,5 +1,4 @@
 package com.example.boxingapp.data.entity
-
 import androidx.room.ColumnInfo
 import androidx.room.Embedded
 
