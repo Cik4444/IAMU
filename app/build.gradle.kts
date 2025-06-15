@@ -5,8 +5,6 @@ plugins {
     id("org.jetbrains.kotlin.kapt")
 }
 
-apply(plugin = "kotlin-kapt")
-
 android {
     namespace = "com.example.boxingapp"
     compileSdk = 35
