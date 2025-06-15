@@ -18,6 +18,16 @@ class FighterRepository(
     private val divisionDao: DivisionDao
 ) {
 
+    private suspend fun mapWithDivision(join: FighterWithDivision): Fighter {
+        val base = FighterMapper.toModel(join)
+        if (join.division != null) return base
+
+        val division = divisionDao.getById(join.fighter.divisionId)
+        return if (division != null) {
+            base.copy(division = division.toModel())
+        } else base
+    }
+
     suspend fun getFighters(name: String, divisionId: String?): List<Fighter> {
         return try {
             val encodedName = java.net.URLEncoder.encode(name, "UTF-8")
@@ -33,14 +43,12 @@ class FighterRepository(
                     fighter.copy(isFavorite = favoriteIds.contains(fighter.id))
                 }
 
-                val existingDivisionIds = divisionDao.getAllIds().toSet()
-                val missingDivisions = fightersToSave
+                val divisionsToSave = fightersToSave
                     .mapNotNull { it.division }
-                    .filter { it.id !in existingDivisionIds }
                     .distinctBy { it.id }
 
-                if (missingDivisions.isNotEmpty()) {
-                    divisionDao.insertAll(missingDivisions.map { it.toEntity() })
+                if (divisionsToSave.isNotEmpty()) {
+                    divisionDao.insertAll(divisionsToSave.map { it.toEntity() })
                 }
 
                 fighterDao.insertAll(fightersToSave.map { FighterMapper.toEntity(it) })
@@ -63,7 +71,7 @@ class FighterRepository(
     private suspend fun getCachedFighters(name: String, divisionId: String?): List<Fighter> {
         return withContext(Dispatchers.IO) {
             fighterDao.searchFightersWithDivision(name, divisionId)
-                .map { FighterMapper.toModel(it) }
+                .map { mapWithDivision(it) }
         }
     }
 
@@ -72,13 +80,13 @@ class FighterRepository(
     }
 
     suspend fun getFavorites(): List<Fighter> {
-        return fighterDao.getFavoritesWithDivision().map { FighterMapper.toModel(it) }
+        return fighterDao.getFavoritesWithDivision().map { mapWithDivision(it) }
     }
 
 
     fun getFavoritesFlow(): Flow<List<Fighter>> =
-        fighterDao.getFavoritesFlowWithDivision().map { entityList ->
-            entityList.map { entity -> FighterMapper.toModel(entity) }
+        fighterDao.getFavoritesFlowWithDivision().map { list ->
+            list.map { mapWithDivision(it) }
         }
 
 
