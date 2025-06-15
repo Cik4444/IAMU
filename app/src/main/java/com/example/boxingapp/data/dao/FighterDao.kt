@@ -2,6 +2,7 @@ package com.example.boxingapp.data.dao
 
 import androidx.room.*
 import com.example.boxingapp.data.entity.FighterEntity
+import com.example.boxingapp.data.entity.FighterWithDivision
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -25,6 +26,10 @@ interface FighterDao {
     @Query("SELECT * FROM fighters WHERE isFavorite = 1")
     suspend fun getFavorites(): List<FighterEntity>
 
+    @Transaction
+    @Query("SELECT * FROM fighters WHERE isFavorite = 1")
+    suspend fun getFavoritesWithDivision(): List<FighterWithDivision>
+
 
     @Query("UPDATE fighters SET isFavorite = :isFavorite WHERE id = :fighterId")
     suspend fun updateFavoriteStatus(fighterId: String, isFavorite: Boolean)
@@ -40,8 +45,20 @@ interface FighterDao {
     """)
     suspend fun searchFighters(name: String?, divisionId: String?): List<FighterEntity>
 
+    @Transaction
+    @Query("""
+        SELECT * FROM fighters
+        WHERE (:name IS NULL OR name LIKE '%' || :name || '%')
+        AND (:divisionId IS NULL OR divisionId = :divisionId)
+    """)
+    suspend fun searchFightersWithDivision(name: String?, divisionId: String?): List<FighterWithDivision>
+
     @Query("SELECT * FROM fighters WHERE isFavorite = 1")
     fun getFavoritesFlow(): Flow<List<FighterEntity>>
+
+    @Transaction
+    @Query("SELECT * FROM fighters WHERE isFavorite = 1")
+    fun getFavoritesFlowWithDivision(): Flow<List<FighterWithDivision>>
 
 
 }
