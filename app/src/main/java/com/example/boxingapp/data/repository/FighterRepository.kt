@@ -72,8 +72,14 @@ class FighterRepository(
 
     private suspend fun getCachedFighters(name: String, divisionId: String?): List<Fighter> {
         return withContext(Dispatchers.IO) {
-            fighterDao.searchFightersJoined(name, divisionId)
-                .map { mapWithDivision(it) }
+            val entities = fighterDao.searchFighters(name, divisionId)
+            val divisionIds = entities.map { it.divisionId }.distinct()
+            val divisions = divisionDao.getByIds(divisionIds).associateBy { it.id }
+            entities.map { entity ->
+                val base = toModel(entity)
+                val division = divisions[entity.divisionId]?.toModel()
+                if (division != null) base.copy(division = division) else base
+            }
         }
     }
 
@@ -82,13 +88,28 @@ class FighterRepository(
     }
 
     suspend fun getFavorites(): List<Fighter> {
-        return fighterDao.getFavoritesJoined().map { mapWithDivision(it) }
+        return withContext(Dispatchers.IO) {
+            val entities = fighterDao.getFavorites()
+            val divisionIds = entities.map { it.divisionId }.distinct()
+            val divisions = divisionDao.getByIds(divisionIds).associateBy { it.id }
+            entities.map { entity ->
+                val base = toModel(entity)
+                val division = divisions[entity.divisionId]?.toModel()
+                if (division != null) base.copy(division = division) else base
+            }
+        }
     }
 
 
     fun getFavoritesFlow(): Flow<List<Fighter>> =
-        fighterDao.getFavoritesFlowJoined().map { list ->
-            list.map { mapWithDivision(it) }
+        fighterDao.getFavoritesFlow().map { entityList ->
+            val divisionIds = entityList.map { it.divisionId }.distinct()
+            val divisions = divisionDao.getByIds(divisionIds).associateBy { it.id }
+            entityList.map { entity ->
+                val base = toModel(entity)
+                val division = divisions[entity.divisionId]?.toModel()
+                if (division != null) base.copy(division = division) else base
+            }
         }
 
 
