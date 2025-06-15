@@ -11,9 +11,11 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.boxingapp.data.database.AppDatabase
-import com.example.boxingapp.ui.viewmodel.DivisionViewModel
-import com.example.boxingapp.ui.viewmodel.DivisionViewModelFactory
+
 import com.example.boxingapp.data.api.RetrofitInstance
+
+import com.example.boxingapp.presentation.viewmodel.DivisionViewModel
+import com.example.boxingapp.presentation.viewmodel.DivisionViewModelFactory
 
 @Composable
 fun DivisionScreen() {

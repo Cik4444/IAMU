@@ -22,7 +22,7 @@ fun FavoritesScreen(
     val context = androidx.compose.ui.platform.LocalContext.current
     val db = com.example.boxingapp.data.database.AppDatabase.getInstance(context)
     val viewModel: FighterViewModel = androidx.lifecycle.viewmodel.compose.viewModel(
-        factory = com.example.boxingapp.ui.viewmodel.FighterViewModelFactory(
+        factory = com.example.boxingapp.presentation.viewmodel.FighterViewModelFactory(
             com.example.boxingapp.data.repository.FighterRepository(
                 apiService = RetrofitInstance.api,
                 fighterDao = db.fighterDao(),
