@@ -26,4 +26,3 @@ interface DivisionDao {
     suspend fun getByIds(ids: List<String>): List<DivisionEntity>
 
 }
-
