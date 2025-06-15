@@ -3,13 +3,8 @@ package com.example.boxingapp.data.repository
 import com.example.boxingapp.data.api.BoxingApiService
 import com.example.boxingapp.data.dao.DivisionDao
 import com.example.boxingapp.data.dao.FighterDao
-import com.example.boxingapp.data.entity.FighterEntity
 import com.example.boxingapp.data.mapper.FighterMapper
-import com.example.boxingapp.data.mapper.FighterMapper.toEntity
-import com.example.boxingapp.data.mapper.FighterMapper.toModel
 import com.example.boxingapp.data.mapper.toEntity
-import com.example.boxingapp.data.mapper.toModel
-import com.example.boxingapp.data.model.Division
 import com.example.boxingapp.data.model.Fighter
 import com.example.boxingapp.util.sanitizeFighter
 import kotlinx.coroutines.Dispatchers
@@ -67,7 +62,8 @@ class FighterRepository(
 
     private suspend fun getCachedFighters(name: String, divisionId: String?): List<Fighter> {
         return withContext(Dispatchers.IO) {
-            fighterDao.searchFighters(name, divisionId).map { toModel(it) }
+            fighterDao.searchFightersWithDivision(name, divisionId)
+                .map { FighterMapper.toModel(it) }
         }
     }
 
@@ -76,13 +72,13 @@ class FighterRepository(
     }
 
     suspend fun getFavorites(): List<Fighter> {
-        return fighterDao.getFavorites().map { toModel(it) }
+        return fighterDao.getFavoritesWithDivision().map { FighterMapper.toModel(it) }
     }
 
 
     fun getFavoritesFlow(): Flow<List<Fighter>> =
-        fighterDao.getFavoritesFlow().map { entityList ->
-            entityList.map { entity -> toModel(entity) }
+        fighterDao.getFavoritesFlowWithDivision().map { entityList ->
+            entityList.map { entity -> FighterMapper.toModel(entity) }
         }
 
 
