@@ -70,7 +70,7 @@ class FighterRepository(
 
     private suspend fun getCachedFighters(name: String, divisionId: String?): List<Fighter> {
         return withContext(Dispatchers.IO) {
-            fighterDao.searchFightersWithDivision(name, divisionId)
+            fighterDao.searchFightersJoined(name, divisionId)
                 .map { mapWithDivision(it) }
         }
     }
@@ -80,12 +80,12 @@ class FighterRepository(
     }
 
     suspend fun getFavorites(): List<Fighter> {
-        return fighterDao.getFavoritesWithDivision().map { mapWithDivision(it) }
+        return fighterDao.getFavoritesJoined().map { mapWithDivision(it) }
     }
 
 
     fun getFavoritesFlow(): Flow<List<Fighter>> =
-        fighterDao.getFavoritesFlowWithDivision().map { list ->
+        fighterDao.getFavoritesFlowJoined().map { list ->
             list.map { mapWithDivision(it) }
         }
 
