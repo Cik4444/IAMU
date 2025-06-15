@@ -53,7 +53,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.ui.platform.LocalContext
 import com.example.boxingapp.data.database.AppDatabase
 import com.example.boxingapp.data.repository.FighterRepository
+
+import com.example.boxingapp.data.api.RetrofitInstance
+
 import com.example.boxingapp.presentation.viewmodel.FighterViewModelFactory
+
 
 
 @Composable

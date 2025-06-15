@@ -13,6 +13,7 @@ import androidx.navigation.NavController
 import com.example.boxingapp.presentation.viewmodel.FighterViewModel
 import com.google.gson.Gson
 import java.net.URLEncoder
+import com.example.boxingapp.data.api.RetrofitInstance
 
 @Composable
 fun FavoritesScreen(
