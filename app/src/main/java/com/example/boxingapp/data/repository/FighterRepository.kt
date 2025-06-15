@@ -71,12 +71,12 @@ class FighterRepository(
 
 
     private suspend fun getCachedFighters(name: String, divisionId: String?): List<Fighter> {
-        return withContext(Dispatchers.IO) {
-            val entities = fighterDao.searchFighters(name, divisionId)
+        return withContext<List<Fighter>>(Dispatchers.IO) {
+            val entities: List<FighterEntity> = fighterDao.searchFighters(name, divisionId)
             val divisionIds = entities.map { it.divisionId }.distinct()
             val divisions = divisionDao.getByIds(divisionIds).associateBy { it.id }
             entities.map { entity ->
-                val base = toModel(entity)
+                val base = FighterMapper.toModel(entity)
                 val division = divisions[entity.divisionId]?.toModel()
                 if (division != null) base.copy(division = division) else base
             }
@@ -88,12 +88,12 @@ class FighterRepository(
     }
 
     suspend fun getFavorites(): List<Fighter> {
-        return withContext(Dispatchers.IO) {
-            val entities = fighterDao.getFavorites()
+        return withContext<List<Fighter>>(Dispatchers.IO) {
+            val entities: List<FighterEntity> = fighterDao.getFavorites()
             val divisionIds = entities.map { it.divisionId }.distinct()
             val divisions = divisionDao.getByIds(divisionIds).associateBy { it.id }
             entities.map { entity ->
-                val base = toModel(entity)
+                val base = FighterMapper.toModel(entity)
                 val division = divisions[entity.divisionId]?.toModel()
                 if (division != null) base.copy(division = division) else base
             }
@@ -102,11 +102,11 @@ class FighterRepository(
 
 
     fun getFavoritesFlow(): Flow<List<Fighter>> =
-        fighterDao.getFavoritesFlow().map { entityList ->
+        fighterDao.getFavoritesFlow().map { entityList: List<FighterEntity> ->
             val divisionIds = entityList.map { it.divisionId }.distinct()
             val divisions = divisionDao.getByIds(divisionIds).associateBy { it.id }
             entityList.map { entity ->
-                val base = toModel(entity)
+                val base = FighterMapper.toModel(entity)
                 val division = divisions[entity.divisionId]?.toModel()
                 if (division != null) base.copy(division = division) else base
             }

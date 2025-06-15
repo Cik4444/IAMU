@@ -10,3 +10,4 @@ data class DivisionEntity(
     val weightKg: Double,
     val weightLb: Double
 )
+

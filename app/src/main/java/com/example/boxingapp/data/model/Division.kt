@@ -6,3 +6,4 @@ data class Division(
     val weight_kg: Double?,
     val weight_lb: Double?
 )
+

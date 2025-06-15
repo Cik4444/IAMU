@@ -9,3 +9,4 @@ data class Fighter(
     val division: Division?,
     val isFavorite: Boolean = false
 )
+

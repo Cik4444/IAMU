@@ -6,3 +6,4 @@ data class Stats(
     val draws: Int?,
     val total_bouts: Int?
 )
+
