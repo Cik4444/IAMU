@@ -2,7 +2,6 @@ package com.example.boxingapp.data.mapper
 
 import com.example.boxingapp.data.entity.FighterEntity
 import com.example.boxingapp.data.entity.FighterWithDivision
-import com.example.boxingapp.data.mapper.toModel as divisionEntityToModel
 import com.example.boxingapp.data.model.Division
 import com.example.boxingapp.data.model.Fighter
 import com.example.boxingapp.data.model.Stats
@@ -52,7 +51,14 @@ object FighterMapper {
 
     fun toModel(fighterWithDivision: FighterWithDivision): Fighter {
         val entity = fighterWithDivision.fighter
-        val division = fighterWithDivision.division?.let { divisionEntityToModel(it) } ?: Division(
+        val division = fighterWithDivision.division?.let {
+            Division(
+                id = it.id,
+                name = it.name,
+                weight_kg = it.weightKg,
+                weight_lb = it.weightLb
+            )
+        } ?: Division(
             id = entity.divisionId,
             name = "Nepoznata divizija",
             weight_kg = 0.0,

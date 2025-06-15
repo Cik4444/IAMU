@@ -1,16 +1,18 @@
 package com.example.boxingapp.data.entity
-
+import androidx.room.ColumnInfo
 import androidx.room.Embedded
-import androidx.room.Relation
 
 /**
- * Represents a Fighter along with its associated Division loaded from Room.
+ * Represents a Fighter together with its Division from a JOIN query.
  */
 data class FighterWithDivision(
     @Embedded val fighter: FighterEntity,
-    @Relation(
-        parentColumn = "divisionId",
-        entityColumn = "id"
-    )
-    val division: DivisionEntity?
+    @Embedded(prefix = "division_") val division: DivisionFields?,
+)
+
+data class DivisionFields(
+    @ColumnInfo(name = "division_id") val id: String?,
+    @ColumnInfo(name = "division_name") val name: String?,
+    @ColumnInfo(name = "division_weightKg") val weightKg: Double?,
+    @ColumnInfo(name = "division_weightLb") val weightLb: Double?,
 )
