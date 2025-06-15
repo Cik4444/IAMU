@@ -5,8 +5,6 @@ import com.example.boxingapp.data.dao.DivisionDao
 import com.example.boxingapp.data.dao.FighterDao
 import com.example.boxingapp.data.mapper.FighterMapper
 import com.example.boxingapp.data.mapper.toEntity
-import com.example.boxingapp.data.mapper.toModel
-import com.example.boxingapp.data.entity.FighterWithDivision
 import com.example.boxingapp.data.model.Fighter
 import com.example.boxingapp.util.sanitizeFighter
 import kotlinx.coroutines.Dispatchers

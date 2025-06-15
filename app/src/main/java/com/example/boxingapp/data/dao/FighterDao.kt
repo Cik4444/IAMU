@@ -51,6 +51,18 @@ interface FighterDao {
         AND (:divisionId IS NULL OR divisionId = :divisionId)
     """)
     suspend fun searchFighters(name: String?, divisionId: String?): List<FighterEntity>
+  
+    @Query(
+        """
+        SELECT f.*, d.id AS division_id, d.name AS division_name,
+               d.weightKg AS division_weightKg, d.weightLb AS division_weightLb
+        FROM fighters f
+        LEFT JOIN divisions d ON f.divisionId = d.id
+        WHERE (:name IS NULL OR f.name LIKE '%' || :name || '%')
+          AND (:divisionId IS NULL OR f.divisionId = :divisionId)
+        """
+    )
+    suspend fun searchFightersWithDivision(name: String?, divisionId: String?): List<FighterWithDivision>
 
     @Query(
         """
@@ -66,6 +78,17 @@ interface FighterDao {
 
     @Query("SELECT * FROM fighters WHERE isFavorite = 1")
     fun getFavoritesFlow(): Flow<List<FighterEntity>>
+ 
+    @Query(
+        """
+        SELECT f.*, d.id AS division_id, d.name AS division_name,
+               d.weightKg AS division_weightKg, d.weightLb AS division_weightLb
+        FROM fighters f
+        LEFT JOIN divisions d ON f.divisionId = d.id
+        WHERE f.isFavorite = 1
+        """
+    )
+    fun getFavoritesFlowWithDivision(): Flow<List<FighterWithDivision>>
 
     @Query(
         """
