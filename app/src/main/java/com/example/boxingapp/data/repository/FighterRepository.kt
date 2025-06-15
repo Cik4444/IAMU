@@ -3,13 +3,10 @@ package com.example.boxingapp.data.repository
 import com.example.boxingapp.data.api.BoxingApiService
 import com.example.boxingapp.data.dao.DivisionDao
 import com.example.boxingapp.data.dao.FighterDao
-import com.example.boxingapp.data.entity.FighterEntity
 import com.example.boxingapp.data.mapper.FighterMapper
-import com.example.boxingapp.data.mapper.FighterMapper.toEntity
-import com.example.boxingapp.data.mapper.FighterMapper.toModel
 import com.example.boxingapp.data.mapper.toEntity
 import com.example.boxingapp.data.mapper.toModel
-import com.example.boxingapp.data.model.Division
+import com.example.boxingapp.data.entity.FighterWithDivision
 import com.example.boxingapp.data.model.Fighter
 import com.example.boxingapp.util.sanitizeFighter
 import kotlinx.coroutines.Dispatchers
@@ -22,6 +19,16 @@ class FighterRepository(
     private val fighterDao: FighterDao,
     private val divisionDao: DivisionDao
 ) {
+
+    private suspend fun mapWithDivision(join: FighterWithDivision): Fighter {
+        val base = FighterMapper.toModel(join)
+        if (join.division != null) return base
+
+        val division = divisionDao.getById(join.fighter.divisionId)
+        return if (division != null) {
+            base.copy(division = division.toModel())
+        } else base
+    }
 
     suspend fun getFighters(name: String, divisionId: String?): List<Fighter> {
         return try {
@@ -38,14 +45,12 @@ class FighterRepository(
                     fighter.copy(isFavorite = favoriteIds.contains(fighter.id))
                 }
 
-                val existingDivisionIds = divisionDao.getAllIds().toSet()
-                val missingDivisions = fightersToSave
+                val divisionsToSave = fightersToSave
                     .mapNotNull { it.division }
-                    .filter { it.id !in existingDivisionIds }
                     .distinctBy { it.id }
 
-                if (missingDivisions.isNotEmpty()) {
-                    divisionDao.insertAll(missingDivisions.map { it.toEntity() })
+                if (divisionsToSave.isNotEmpty()) {
+                    divisionDao.insertAll(divisionsToSave.map { it.toEntity() })
                 }
 
                 fighterDao.insertAll(fightersToSave.map { FighterMapper.toEntity(it) })
@@ -67,7 +72,8 @@ class FighterRepository(
 
     private suspend fun getCachedFighters(name: String, divisionId: String?): List<Fighter> {
         return withContext(Dispatchers.IO) {
-            fighterDao.searchFighters(name, divisionId).map { toModel(it) }
+            fighterDao.searchFightersWithDivision(name, divisionId)
+                .map { mapWithDivision(it) }
         }
     }
 
@@ -76,13 +82,13 @@ class FighterRepository(
     }
 
     suspend fun getFavorites(): List<Fighter> {
-        return fighterDao.getFavorites().map { toModel(it) }
+        return fighterDao.getFavoritesWithDivision().map { mapWithDivision(it) }
     }
 
 
     fun getFavoritesFlow(): Flow<List<Fighter>> =
-        fighterDao.getFavoritesFlow().map { entityList ->
-            entityList.map { entity -> toModel(entity) }
+        fighterDao.getFavoritesFlowWithDivision().map { list ->
+            list.map { mapWithDivision(it) }
         }
 
 
