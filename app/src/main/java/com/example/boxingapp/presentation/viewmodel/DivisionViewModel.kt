@@ -1,4 +1,4 @@
-package com.example.boxingapp.ui.viewmodel
+package com.example.boxingapp.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

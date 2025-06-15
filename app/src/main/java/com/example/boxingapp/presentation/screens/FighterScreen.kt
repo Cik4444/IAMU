@@ -45,15 +45,15 @@ import com.example.boxingapp.data.model.Division
 import com.example.boxingapp.data.repository.DivisionRepository
 import com.example.boxingapp.presentation.screens.NavRoutes
 import com.example.boxingapp.presentation.viewmodel.FighterViewModel
-import com.example.boxingapp.ui.viewmodel.DivisionViewModel
-import com.example.boxingapp.ui.viewmodel.DivisionViewModelFactory
+import com.example.boxingapp.presentation.viewmodel.DivisionViewModel
+import com.example.boxingapp.presentation.viewmodel.DivisionViewModelFactory
 import com.google.gson.Gson
 import java.net.URLEncoder
 import androidx.compose.foundation.lazy.items
 import androidx.compose.ui.platform.LocalContext
 import com.example.boxingapp.data.database.AppDatabase
 import com.example.boxingapp.data.repository.FighterRepository
-import com.example.boxingapp.ui.viewmodel.FighterViewModelFactory
+import com.example.boxingapp.presentation.viewmodel.FighterViewModelFactory
 
 
 @Composable
