@@ -33,8 +33,9 @@ class FighterRepository(
 
     suspend fun getFighters(name: String, divisionId: String?): List<Fighter> {
         return try {
-            val encodedName = java.net.URLEncoder.encode(name, "UTF-8")
-            val response = apiService.getFighters(encodedName)
+            // Retrofit handles query parameter encoding, so pass the raw
+            // string to avoid double encoding which breaks search results
+            val response = apiService.getFighters(name)
 
             if (response.isSuccessful) {
                 val apiFighters = response.body() ?: emptyList()
