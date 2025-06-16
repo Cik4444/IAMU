@@ -15,4 +15,16 @@ interface BoxingApiService {
         @Query("page_size") size: Int = 50
     ): Response<List<Fighter>>
 
+    /**
+     * Some API endpoints provide a dedicated search path for fighter lookup
+     * by name.  When available, this returns a more precise result set than
+     * the generic [getFighters] call.
+     */
+    @GET("v1/fighters/search")
+    suspend fun searchFighters(
+        @Query("name") name: String,
+        @Query("page_num") page: Int = 1,
+        @Query("page_size") size: Int = 50
+    ): Response<List<Fighter>>
+
 }
