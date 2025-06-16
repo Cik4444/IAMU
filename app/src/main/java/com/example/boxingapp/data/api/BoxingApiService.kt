@@ -14,5 +14,4 @@ interface BoxingApiService {
         @Query("page_num") page: Int = 1,
         @Query("page_size") size: Int = 50
     ): Response<List<Fighter>>
-
 }
