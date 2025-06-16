@@ -20,7 +20,10 @@ import com.example.boxingapp.presentation.screens.NavRoutes
 import com.example.boxingapp.data.model.Fighter
 import com.example.boxingapp.presentation.screens.FavoritesScreen
 import com.example.boxingapp.presentation.screens.HomeScreen
+import com.example.boxingapp.presentation.screens.LoginScreen
+import com.example.boxingapp.presentation.screens.RegisterScreen
 import com.example.boxingapp.data.preferences.ThemePreferenceRepository
+import com.example.boxingapp.data.preferences.UserPreferenceRepository
 import com.google.gson.Gson
 import java.net.URLDecoder
 
@@ -30,9 +33,11 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val themeRepo = ThemePreferenceRepository(applicationContext)
+        val userPrefs = UserPreferenceRepository(applicationContext)
 
         setContent {
             val darkThemeEnabled by themeRepo.darkThemeFlow.collectAsState(initial = false)
+            val loggedInUser by userPrefs.loggedInUserFlow.collectAsState(initial = null)
             val scope = rememberCoroutineScope()
 
             BoxingAppTheme(darkTheme = darkThemeEnabled) {
@@ -40,8 +45,14 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     NavHost(
                         navController = navController,
-                        startDestination = NavRoutes.Home
+                        startDestination = if (loggedInUser == null) NavRoutes.Login else NavRoutes.Home
                     ) {
+                        composable(NavRoutes.Login) {
+                            LoginScreen(navController)
+                        }
+                        composable(NavRoutes.Register) {
+                            RegisterScreen(navController)
+                        }
                         composable(NavRoutes.Home) {
                             HomeScreen(
                                 navController = navController,
