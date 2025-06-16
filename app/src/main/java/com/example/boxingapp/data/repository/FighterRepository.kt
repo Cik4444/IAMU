@@ -43,8 +43,9 @@ class FighterRepository(
 
             android.util.Log.d("FighterRepo", "API response code=${response.code()}")
 
-            if (response.isSuccessful) {
-                val apiFighters = response.body() ?: emptyList()
+            val body = response.body()
+            if (response.isSuccessful && body != null) {
+                val apiFighters = body
                 val fighters = apiFighters.map { sanitizeFighter(it) }
 
                 val favoriteIds = fighterDao.getFavorites().map { it.id }
