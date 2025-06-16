@@ -3,9 +3,12 @@ package com.example.boxingapp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import com.example.boxingapp.ui.theme.BoxingAppTheme
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -14,10 +17,10 @@ import androidx.navigation.navArgument
 import com.example.boxingapp.presentation.screens.FighterDetailScreen
 import com.example.boxingapp.presentation.screens.FighterScreen
 import com.example.boxingapp.presentation.screens.NavRoutes
-import com.example.boxingapp.presentation.viewmodel.FighterViewModel
 import com.example.boxingapp.data.model.Fighter
 import com.example.boxingapp.presentation.screens.FavoritesScreen
 import com.example.boxingapp.presentation.screens.HomeScreen
+import com.example.boxingapp.data.preferences.ThemePreferenceRepository
 import com.google.gson.Gson
 import java.net.URLDecoder
 
@@ -26,8 +29,13 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val themeRepo = ThemePreferenceRepository(applicationContext)
+
         setContent {
-            MaterialTheme {
+            val darkThemeEnabled by themeRepo.darkThemeFlow.collectAsState(initial = false)
+            val scope = rememberCoroutineScope()
+
+            BoxingAppTheme(darkTheme = darkThemeEnabled) {
                 Surface {
                     val navController = rememberNavController()
                     NavHost(
@@ -35,7 +43,11 @@ class MainActivity : ComponentActivity() {
                         startDestination = NavRoutes.Home
                     ) {
                         composable(NavRoutes.Home) {
-                            HomeScreen(navController = navController)
+                            HomeScreen(
+                                navController = navController,
+                                isDarkTheme = darkThemeEnabled,
+                                onToggleTheme = { enabled -> scope.launch { themeRepo.setDarkTheme(enabled) } }
+                            )
                         }
                         composable(NavRoutes.FighterList) {
                             FighterScreen(navController = navController)
