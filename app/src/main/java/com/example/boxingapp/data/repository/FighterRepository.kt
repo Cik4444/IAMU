@@ -33,10 +33,7 @@ class FighterRepository(
 
     suspend fun getFighters(name: String, divisionId: String?): List<Fighter> {
         return try {
-            // Query the fighters endpoint directly. Retrofit handles encoding of
-            // parameters so we simply pass the search text as-is.
             val response = apiService.getFighters(name)
-
             if (response.isSuccessful) {
                 val apiFighters = response.body() ?: emptyList()
                 val fighters = apiFighters.map { sanitizeFighter(it) }
