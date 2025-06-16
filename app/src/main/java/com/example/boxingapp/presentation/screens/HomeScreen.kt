@@ -6,11 +6,19 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.boxingapp.data.database.AppDatabase
+import com.example.boxingapp.data.preferences.UserPreferenceRepository
+import com.example.boxingapp.data.repository.UserRepository
+import com.example.boxingapp.presentation.viewmodel.AuthViewModel
+import com.example.boxingapp.presentation.viewmodel.AuthViewModelFactory
 
 @Composable
 fun HomeScreen(
@@ -18,6 +26,14 @@ fun HomeScreen(
     isDarkTheme: Boolean,
     onToggleTheme: (Boolean) -> Unit
 ) {
+    val context = LocalContext.current
+    val db = remember { AppDatabase.getInstance(context) }
+    val authViewModel: AuthViewModel = viewModel(
+        factory = AuthViewModelFactory(
+            UserRepository(db.userDao()),
+            UserPreferenceRepository(context)
+        )
+    )
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -73,6 +89,20 @@ fun HomeScreen(
                 checked = isDarkTheme,
                 onCheckedChange = { onToggleTheme(it) }
             )
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        OutlinedButton(
+            onClick = {
+                authViewModel.logout()
+                navController.navigate(NavRoutes.Login) {
+                    popUpTo(NavRoutes.Home) { inclusive = true }
+                }
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Odjava")
         }
     }
 }
