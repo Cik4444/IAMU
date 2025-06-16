@@ -5,10 +5,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.Surface
 import com.example.boxingapp.ui.theme.BoxingAppTheme
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -20,6 +20,7 @@ import com.example.boxingapp.presentation.screens.NavRoutes
 import com.example.boxingapp.data.model.Fighter
 import com.example.boxingapp.presentation.screens.FavoritesScreen
 import com.example.boxingapp.presentation.screens.HomeScreen
+import com.example.boxingapp.data.preferences.ThemePreferenceRepository
 import com.google.gson.Gson
 import java.net.URLDecoder
 
@@ -28,8 +29,11 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val themeRepo = ThemePreferenceRepository(applicationContext)
+
         setContent {
-            var darkThemeEnabled by rememberSaveable { mutableStateOf(false) }
+            val darkThemeEnabled by themeRepo.darkThemeFlow.collectAsState(initial = false)
+            val scope = rememberCoroutineScope()
 
             BoxingAppTheme(darkTheme = darkThemeEnabled) {
                 Surface {
@@ -42,7 +46,8 @@ class MainActivity : ComponentActivity() {
                             HomeScreen(
                                 navController = navController,
                                 isDarkTheme = darkThemeEnabled,
-                                onToggleTheme = { darkThemeEnabled = it }
+                                onToggleTheme = { enabled -> scope.launch { themeRepo.setDarkTheme(enabled) } }
+
                             )
                         }
                         composable(NavRoutes.FighterList) {
