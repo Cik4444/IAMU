@@ -33,12 +33,7 @@ class FighterRepository(
 
     suspend fun getFighters(name: String, divisionId: String?): List<Fighter> {
         return try {
-            val response = if (name.isNotBlank()) {
-                apiService.searchFighters(name)
-            } else {
-                apiService.getFighters(name)
-            }
-
+            val response = apiService.getFighters(name)
             if (response.isSuccessful) {
                 val apiFighters = response.body() ?: emptyList()
                 val fighters = apiFighters.map { sanitizeFighter(it) }
