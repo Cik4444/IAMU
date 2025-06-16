@@ -47,6 +47,7 @@ class MainActivity : ComponentActivity() {
                                 navController = navController,
                                 isDarkTheme = darkThemeEnabled,
                                 onToggleTheme = { enabled -> scope.launch { themeRepo.setDarkTheme(enabled) } }
+
                             )
                         }
                         composable(NavRoutes.FighterList) {
