@@ -1,5 +1,6 @@
 package com.example.boxingapp.data.repository
 
+import android.util.Log
 import com.example.boxingapp.data.api.BoxingApiService
 import com.example.boxingapp.data.dao.DivisionDao
 import com.example.boxingapp.data.dao.FighterDao
@@ -33,11 +34,14 @@ class FighterRepository(
 
     suspend fun getFighters(name: String, divisionId: String?): List<Fighter> {
         return try {
-            val response = if (name.isNotBlank()) {
-                apiService.searchFighters(name)
-            } else {
-                apiService.getFighters(name)
-            }
+            android.util.Log.d("FighterRepo", "getFighters query=$name division=$divisionId")
+
+            // The API provides a single endpoint for listing fighters with an
+            // optional name query. Retrofit handles URL encoding so we pass the
+            // raw string directly.
+            val response = apiService.getFighters(name)
+
+            android.util.Log.d("FighterRepo", "API response code=${response.code()}")
 
             if (response.isSuccessful) {
                 val apiFighters = response.body() ?: emptyList()
@@ -61,11 +65,14 @@ class FighterRepository(
 
                 fightersToSave
             } else {
-                println("API ERROR ${response.code()} ${response.errorBody()?.string()}")
+                android.util.Log.d(
+                    "FighterRepo",
+                    "API error code=${response.code()} body=${response.errorBody()?.string()}"
+                )
                 getCachedFighters(name, divisionId)
             }
         } catch (e: Exception) {
-            println("❌ Network greška: ${e.message}")
+            android.util.Log.e("FighterRepo", "Network error: ${e.message}", e)
             getCachedFighters(name, divisionId)
         }
     }

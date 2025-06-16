@@ -15,17 +15,4 @@ interface BoxingApiService {
         @Query("page_size") size: Int = 50
     ): Response<List<Fighter>>
 
-    /**
-     * Endpoint for performing an exact fighter search. The API returns a
-     * 400 error when no matching fighter is found, so the repository handles
-     * this case and falls back to cached data.
-
-     */
-    @GET("v1/fighters/search")
-    suspend fun searchFighters(
-        @Query("name") name: String,
-        @Query("page_num") page: Int = 1,
-        @Query("page_size") size: Int = 50
-    ): Response<List<Fighter>>
-
 }
