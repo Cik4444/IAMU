@@ -13,7 +13,11 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 
 @Composable
-fun HomeScreen(navController: NavController) {
+fun HomeScreen(
+    navController: NavController,
+    isDarkTheme: Boolean,
+    onToggleTheme: (Boolean) -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -56,6 +60,19 @@ fun HomeScreen(navController: NavController) {
             Icon(imageVector = Icons.Default.Favorite, contentDescription = null)
             Spacer(modifier = Modifier.width(8.dp))
             Text("Favoriti")
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(text = "Tamna tema")
+            Spacer(modifier = Modifier.width(8.dp))
+            Switch(
+                checked = isDarkTheme,
+                onCheckedChange = { onToggleTheme(it) }
+            )
         }
     }
 }
