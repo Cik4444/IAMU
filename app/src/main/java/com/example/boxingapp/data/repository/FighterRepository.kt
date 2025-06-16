@@ -33,8 +33,12 @@ class FighterRepository(
 
     suspend fun getFighters(name: String, divisionId: String?): List<Fighter> {
         return try {
-            val encodedName = java.net.URLEncoder.encode(name, "UTF-8")
-            val response = apiService.getFighters(encodedName)
+            // Use the dedicated search endpoint when a query is provided.
+            val response = if (name.isNotBlank()) {
+                apiService.searchFighters(name)
+            } else {
+                apiService.getFighters(name)
+            }
 
             if (response.isSuccessful) {
                 val apiFighters = response.body() ?: emptyList()

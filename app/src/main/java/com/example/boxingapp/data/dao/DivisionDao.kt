@@ -3,6 +3,7 @@ package com.example.boxingapp.data.dao
 import androidx.room.*
 import com.example.boxingapp.data.entity.DivisionEntity
 import kotlinx.coroutines.flow.Flow
+import kotlin.jvm.JvmSuppressWildcards
 
 @Dao
 interface DivisionDao {
@@ -23,6 +24,7 @@ interface DivisionDao {
     suspend fun getAllIds(): List<String>
 
     @Query("SELECT * FROM divisions WHERE id IN (:ids)")
+    @JvmSuppressWildcards
     suspend fun getByIds(ids: List<String>): List<DivisionEntity>
 
 }
