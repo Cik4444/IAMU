@@ -19,6 +19,7 @@ interface BoxingApiService {
      * Endpoint for performing an exact fighter search. The API returns a
      * 400 error when no matching fighter is found, so the repository handles
      * this case and falls back to cached data.
+
      */
     @GET("v1/fighters/search")
     suspend fun searchFighters(

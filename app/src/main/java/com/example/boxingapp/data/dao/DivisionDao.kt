@@ -23,8 +23,8 @@ interface DivisionDao {
     @Query("SELECT id FROM divisions")
     suspend fun getAllIds(): List<String>
 
-    @Query("SELECT * FROM divisions WHERE id IN (:ids)")
     @JvmSuppressWildcards
+    @Query("SELECT * FROM divisions WHERE id IN (:ids)")
     suspend fun getByIds(ids: List<String>): List<DivisionEntity>
 
 }

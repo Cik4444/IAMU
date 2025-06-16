@@ -33,7 +33,6 @@ class FighterRepository(
 
     suspend fun getFighters(name: String, divisionId: String?): List<Fighter> {
         return try {
-            // Use the dedicated search endpoint when a query is provided.
             val response = if (name.isNotBlank()) {
                 apiService.searchFighters(name)
             } else {
