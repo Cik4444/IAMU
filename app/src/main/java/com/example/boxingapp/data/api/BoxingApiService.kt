@@ -16,9 +16,10 @@ interface BoxingApiService {
     ): Response<List<Fighter>>
 
     /**
-     * Some API endpoints provide a dedicated search path for fighter lookup
-     * by name.  When available, this returns a more precise result set than
-     * the generic [getFighters] call.
+     * Endpoint for performing an exact fighter search. The API returns a
+     * 400 error when no matching fighter is found, so the repository handles
+     * this case and falls back to cached data.
+
      */
     @GET("v1/fighters/search")
     suspend fun searchFighters(
