@@ -10,7 +10,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 object RetrofitInstance {
 
     private const val BASE_URL = "https://boxing-data-api.p.rapidapi.com/"
-    private const val API_KEY = "6eda44e804mshbcabadf3acfd3e0p12a2c4jsn030cc63c5b5c"
+    private const val API_KEY = "9d315709c1mshd3d639829947da6p10722bjsn36ca264ce40c"
     private const val API_HOST = "boxing-data-api.p.rapidapi.com"
 
     private val logging = HttpLoggingInterceptor().apply {
