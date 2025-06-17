@@ -4,6 +4,7 @@ import androidx.room.*
 import com.example.boxingapp.data.entity.FighterEntity
 import com.example.boxingapp.data.entity.FighterWithDivision
 import kotlinx.coroutines.flow.Flow
+import kotlin.jvm.JvmSuppressWildcards
 
 @Dao
 interface FighterDao {
@@ -43,6 +44,10 @@ interface FighterDao {
 
     @Query("DELETE FROM fighters")
     suspend fun clearAll()
+
+    @JvmSuppressWildcards
+    @Query("SELECT * FROM fighters WHERE id IN (:ids)")
+    suspend fun getByIds(ids: List<String>): List<FighterEntity>
 
 
     @Query("""

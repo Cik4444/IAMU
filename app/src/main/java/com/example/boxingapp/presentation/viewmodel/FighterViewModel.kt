@@ -11,7 +11,8 @@ import kotlinx.coroutines.launch
 
 class FighterViewModel(
     private val repository: FighterRepository,
-    private val context: Context
+    private val context: Context,
+    private val loadOnInit: Boolean = true
 ) : ViewModel() {
 
     val favorites: StateFlow<List<Fighter>> = repository.getFavoritesFlow()
@@ -38,7 +39,9 @@ class FighterViewModel(
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
     init {
-        reloadFighters()
+        if (loadOnInit) {
+            reloadFighters()
+        }
     }
 
     fun onQueryChanged(newQuery: String) {

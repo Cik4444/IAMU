@@ -56,21 +56,25 @@ class FighterRepository(
                 val apiFighters = body
                 val fighters = apiFighters.map { sanitizeFighter(it) }
 
-                val favoriteIds = fighterDao.getFavorites().map { it.id }
+                val fightersToSave = withContext(Dispatchers.IO) {
+                    val favoriteIds = fighterDao.getFavorites().map { it.id }
 
-                val fightersToSave = fighters.map { fighter ->
-                    fighter.copy(isFavorite = favoriteIds.contains(fighter.id))
+                    val merged = fighters.map { fighter ->
+                        fighter.copy(isFavorite = favoriteIds.contains(fighter.id))
+                    }
+
+                    val divisionsToSave = merged
+                        .mapNotNull { it.division }
+                        .distinctBy { it.id }
+
+                    if (divisionsToSave.isNotEmpty()) {
+                        divisionDao.insertAll(divisionsToSave.map { it.toEntity() })
+                    }
+
+                    fighterDao.insertAll(merged.map { FighterMapper.toEntity(it) })
+
+                    merged
                 }
-
-                val divisionsToSave = fightersToSave
-                    .mapNotNull { it.division }
-                    .distinctBy { it.id }
-
-                if (divisionsToSave.isNotEmpty()) {
-                    divisionDao.insertAll(divisionsToSave.map { it.toEntity() })
-                }
-
-                fighterDao.insertAll(fightersToSave.map { FighterMapper.toEntity(it) })
 
                 fightersToSave
             } else {
@@ -104,7 +108,9 @@ class FighterRepository(
     }
 
     suspend fun toggleFavorite(fighterId: String, isFavorite: Boolean) {
-        fighterDao.updateFavoriteStatus(fighterId, isFavorite)
+        withContext(Dispatchers.IO) {
+            fighterDao.updateFavoriteStatus(fighterId, isFavorite)
+        }
     }
 
     suspend fun getFavorites(): List<Fighter> {

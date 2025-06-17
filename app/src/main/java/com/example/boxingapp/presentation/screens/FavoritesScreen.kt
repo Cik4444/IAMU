@@ -28,7 +28,8 @@ fun FavoritesScreen(
                 fighterDao = db.fighterDao(),
                 divisionDao = db.divisionDao()
             ),
-            context
+            context,
+            loadOnInit = false
         )
     )
 
