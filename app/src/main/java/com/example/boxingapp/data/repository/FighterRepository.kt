@@ -106,7 +106,9 @@ class FighterRepository(
     }
 
     suspend fun toggleFavorite(fighterId: String, isFavorite: Boolean) {
-        fighterDao.updateFavoriteStatus(fighterId, isFavorite)
+        withContext(Dispatchers.IO) {
+            fighterDao.updateFavoriteStatus(fighterId, isFavorite)
+        }
     }
 
     suspend fun getFavorites(): List<Fighter> {
