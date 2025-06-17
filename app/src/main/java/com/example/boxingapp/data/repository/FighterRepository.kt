@@ -55,13 +55,13 @@ class FighterRepository(
             if (response.isSuccessful && body != null) {
                 val apiFighters = body
                 val fighters = apiFighters.map { sanitizeFighter(it) }
-
                 val fightersToSave = withContext(Dispatchers.IO) {
                     val favoriteIds = fighterDao.getFavorites().map { it.id }
 
                     val merged = fighters.map { fighter ->
                         fighter.copy(isFavorite = favoriteIds.contains(fighter.id))
                     }
+
 
                     val divisionsToSave = merged
                         .mapNotNull { it.division }
