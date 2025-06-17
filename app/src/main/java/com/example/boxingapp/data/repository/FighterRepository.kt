@@ -32,7 +32,15 @@ class FighterRepository(
         } else base
     }
 
-    suspend fun getFighters(name: String, divisionId: String?): List<Fighter> {
+    suspend fun getFighters(
+        name: String,
+        divisionId: String?,
+        isConnected: Boolean = true
+    ): List<Fighter> {
+        if (!isConnected) {
+            return getCachedFighters(name, divisionId)
+        }
+
         return try {
             android.util.Log.d("FighterRepo", "getFighters query=$name division=$divisionId")
 

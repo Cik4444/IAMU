@@ -2,14 +2,16 @@ package com.example.boxingapp.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.boxingapp.data.database.AppDatabase
 import com.example.boxingapp.data.model.Fighter
 import com.example.boxingapp.data.repository.FighterRepository
+import com.example.boxingapp.util.isInternetAvailable
+import android.content.Context
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class FighterViewModel(
-    private val repository: FighterRepository
+    private val repository: FighterRepository,
+    private val context: Context
 ) : ViewModel() {
 
     val favorites: StateFlow<List<Fighter>> = repository.getFavoritesFlow()
@@ -75,7 +77,8 @@ class FighterViewModel(
             try {
                 val fighters = repository.getFighters(
                     name = _query.value.trim(),
-                    divisionId = _selectedDivisionId.value
+                    divisionId = _selectedDivisionId.value,
+                    isConnected = isInternetAvailable(context)
                 )
                 _fighters.value = fighters
                 _error.value = null

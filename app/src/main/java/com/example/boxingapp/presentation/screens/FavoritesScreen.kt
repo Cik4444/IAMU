@@ -27,7 +27,8 @@ fun FavoritesScreen(
                 apiService = RetrofitInstance.api,
                 fighterDao = db.fighterDao(),
                 divisionDao = db.divisionDao()
-            )
+            ),
+            context
         )
     )
 
