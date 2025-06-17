@@ -56,10 +56,12 @@ class FighterRepository(
                 val apiFighters = body
                 val fighters = apiFighters.map { sanitizeFighter(it) }
 
-                val favoriteIds = fighterDao.getFavorites().map { it.id }
+                val ids = fighters.mapNotNull { it.id }
+                val existing = fighterDao.getByIds(ids)
+                val existingFavorites = existing.filter { it.isFavorite }.map { it.id }
 
                 val fightersToSave = fighters.map { fighter ->
-                    fighter.copy(isFavorite = favoriteIds.contains(fighter.id))
+                    fighter.copy(isFavorite = existingFavorites.contains(fighter.id))
                 }
 
                 val divisionsToSave = fightersToSave
