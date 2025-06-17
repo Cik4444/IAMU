@@ -8,11 +8,16 @@ import com.example.boxingapp.presentation.viewmodel.FighterViewModel
 
 class FighterViewModelFactory(
     private val repository: FighterRepository,
-    private val context: Context
+    private val context: Context,
+    private val loadOnInit: Boolean = true
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(FighterViewModel::class.java)) {
-            return FighterViewModel(repository, context.applicationContext) as T
+            return FighterViewModel(
+                repository,
+                context.applicationContext,
+                loadOnInit
+            ) as T
         }
         throw IllegalArgumentException("Nepoznata klasa ViewModela")
     }
